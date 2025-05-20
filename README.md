@@ -14,3 +14,26 @@ github id: hung162
  3. Bùi Quang Đức
 
 github id:tvangasa
+Project 12 [Dự án 12]. Xây dựng ứng dụng game MineSweeper
+
+Yêu cầu chính:
+
+- Giao diện <b>Java Spring Boot</b>.
+- Có chức năng giải trí, mục tiêu chính của trò chơi là giúp người chơi tăng tính suy luận logic, nhạy
+bén và cảm thấy thoải mái tinh thần sau khi đã chinh phục được trò chơi
+- Và các chức năng khác.
+
+
+Cụ thể:
+
+Là một thành phần giao diện:
++ Mỗi ô trên bảng chơi là một đối tượng MineTile.
++ Người chơi có thể nhấn vào từng ô để mở hoặc đánh dấu (đặt cờ).
+- Là đối tượng mô hình dữ liệu (data model):
++ Lưu trữ thông tin vị trí của ô trên bảng:
++ Hàng (row) và cột (col).
+- Có thể mở rộng để lưu trữ trạng thái của ô:
++ Là mìn hay không (isMine).
++ Đã được mở chưa (isRevealed).
++ Có được đánh dấu (flag) hay không (isFlagged)![Capture](https://github.com/user-attachments/assets/7d1c268b-7a71-4821-b9f5-4b6a59e7b36c)
+
