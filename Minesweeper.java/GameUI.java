@@ -166,3 +166,48 @@ public void setupBoard() {
 			timer.stop();
 		}
 	}
+private int countMine(int r, int c) {
+		if (r < 0 || r >= board.getNumRows() || c < 0 || c >= board.getNumCols())
+			return 0;
+		return board.isMine(board.getTile(r, c)) ? 1 : 0;
+	}
+
+	private void resetGame() {
+		board.getMineList().clear();
+		board.setMines();
+		tilesClicked = 0;
+		gameOver = false;
+		textLabel.setText("Minesweeper: " + board.getMineCount());
+
+		MineTile[][] tiles = board.getBoard();
+		boardPanel.removeAll();
+
+		for (MineTile[] row : tiles) {
+			for (MineTile tile : row) {
+				tile.setEnabled(true);
+				tile.setText("");
+				boardPanel.add(tile);
+			}
+		}
+
+		elapsedSeconds = 0;
+		timerLabel.setText("Time: 0s");
+		if (timer != null) {
+			timer.stop();
+		}
+		startTimer();
+
+		frame.revalidate();
+		frame.repaint();
+	}
+
+	public void startTimer() {
+		timer = new Timer(1000, e -> {
+			elapsedSeconds++;
+			timerLabel.setText("Time: " + elapsedSeconds + "s");
+		});
+		timer.start();
+	}
+
+}
+
