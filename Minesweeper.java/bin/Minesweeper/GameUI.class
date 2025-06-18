@@ -1,0 +1,66 @@
+// Source code is decompiled from a .class file using FernFlower decompiler.
+package Minesweeper;
+
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.Font;
+import java.awt.GridLayout;
+import java.awt.Insets;
+import java.util.Iterator;
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.Timer;
+
+public class GameUI {
+   private JFrame frame;
+   private JLabel textLabel;
+   private JPanel boardPanel;
+   private final MineBoard board;
+   private boolean gameOver = false;
+   private int tilesClicked = 0;
+   private JButton resetButton;
+   private JLabel timerLabel;
+   private Timer timer;
+   private int elapsedSeconds = 0;
+
+   public GameUI(MineBoard board) {
+      this.board = board;
+      this.setupFrame();
+   }
+
+   private void setupFrame() {
+      this.frame = new JFrame("Minesweeper");
+      this.frame.setSize(this.board.getNumCols() * 70, this.board.getNumRows() * 70);
+      this.frame.setDefaultCloseOperation(3);
+      this.frame.setLayout(new BorderLayout());
+      this.frame.setLocationRelativeTo((Component)null);
+      this.frame.setResizable(false);
+      this.textLabel = new JLabel("Minesweeper: " + this.board.getMineCount(), 0);
+      this.textLabel.setFont(new Font("Arial", 1, 25));
+      JPanel textPanel = new JPanel(new BorderLayout());
+      textPanel.add(this.textLabel, "Center");
+      this.frame.add(textPanel, "North");
+      this.boardPanel = new JPanel(new GridLayout(this.board.getNumRows(), this.board.getNumCols()));
+      this.boardPanel.setBackground(Color.gray);
+      this.frame.add(this.boardPanel, "Center");
+      this.textLabel = new JLabel("Minesweeper: " + this.board.getMineCount(), 0);
+      this.textLabel.setFont(new Font("Arial", 1, 25));
+      this.timerLabel = new JLabel("Time: 0s", 4);
+      this.timerLabel.setFont(new Font("Arial", 0, 18));
+      this.resetButton = new JButton("Reset");
+      this.resetButton.setFont(new Font("Arial", 0, 25));
+      this.resetButton.addActionListener((e) -> {
+         this.resetGame();
+      });
+      JPanel topPanel = new JPanel(new BorderLayout());
+      topPanel.add(this.resetButton, "West");
+      topPanel.add(this.textLabel, "Center");
+      topPanel.add(this.timerLabel, "East");
+      this.frame.add(topPanel, "North");
+      this.resetButton.setFocusPainted(false);
+      this.resetButton.setBorderPainted(false);
+      this.resetButton.setBackground(Color.LIGHT_GRAY);
+   }
