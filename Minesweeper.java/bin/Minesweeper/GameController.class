@@ -1,0 +1,19 @@
+// Source code is decompiled from a .class file using FernFlower decompiler.
+package Minesweeper;
+
+public class GameController {
+   private final MineBoard board;
+   private final GameUI ui;
+
+   public GameController(MineBoard board, GameUI ui) {
+      this.board = board;
+      this.ui = ui;
+   }
+
+   public void startGame() {
+      this.board.initializeBoard();
+      this.board.setMines();
+      this.ui.setupBoard();
+      this.ui.startTimer();
+   }
+}
