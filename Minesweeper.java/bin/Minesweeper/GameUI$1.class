@@ -1,0 +1,33 @@
+// Source code is decompiled from a .class file using FernFlower decompiler.
+package Minesweeper;
+
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+
+class GameUI$1 extends MouseAdapter {
+   GameUI$1(GameUI var1, MineTile var2) {
+      this.this$0 = var1;
+      this.val$tile = var2;
+   }
+
+   public void mousePressed(MouseEvent e) {
+      if (!this.this$0.gameOver) {
+         if (e.getButton() == 1) {
+            if (this.val$tile.getText().equals("")) {
+               if (this.this$0.board.isMine(this.val$tile)) {
+                  this.this$0.revealMines();
+               } else {
+                  this.this$0.checkMine(this.val$tile.getRow(), this.val$tile.getCol());
+               }
+            }
+         } else if (e.getButton() == 3) {
+            if (this.val$tile.getText().equals("") && this.val$tile.isEnabled()) {
+               this.val$tile.setText("\ud83d\udea9");
+            } else if (this.val$tile.getText().equals("\ud83d\udea9")) {
+               this.val$tile.setText("");
+            }
+         }
+
+      }
+   }
+}
