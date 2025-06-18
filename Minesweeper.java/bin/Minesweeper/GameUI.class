@@ -64,3 +64,80 @@ public class GameUI {
       this.resetButton.setBorderPainted(false);
       this.resetButton.setBackground(Color.LIGHT_GRAY);
    }
+   
+   public void setupBoard() {
+      MineTile[][] tiles = this.board.getBoard();
+
+      for(int r = 0; r < this.board.getNumRows(); ++r) {
+         for(int c = 0; c < this.board.getNumCols(); ++c) {
+            MineTile tile = tiles[r][c];
+            tile.setFocusable(false);
+            tile.setMargin(new Insets(0, 0, 0, 0));
+            tile.setFont(new Font("Arial Unicode Ms", 0, 45));
+            this.boardPanel.add(tile);
+            tile.addMouseListener(new 1(this, tile));
+         }
+      }
+
+      this.frame.setVisible(true);
+   }
+
+   private void revealMines() {
+      Iterator var2 = this.board.getMineList().iterator();
+
+      while(var2.hasNext()) {
+         MineTile tile = (MineTile)var2.next();
+         tile.setText("\ud83d\udca3");
+      }
+
+      this.gameOver = true;
+      this.textLabel.setText("Game Over!");
+      this.timer.stop();
+   }
+
+   private void checkMine(int r, int c) {
+      if (r >= 0 && r < this.board.getNumRows() && c >= 0 && c < this.board.getNumCols()) {
+         MineTile tile = this.board.getTile(r, c);
+         if (tile.isEnabled()) {
+            tile.setEnabled(false);
+            ++this.tilesClicked;
+            int minesFound = 0;
+            minesFound += this.countMine(r - 1, c - 1);
+            minesFound += this.countMine(r - 1, c);
+            minesFound += this.countMine(r - 1, c + 1);
+            minesFound += this.countMine(r, c - 1);
+            minesFound += this.countMine(r, c + 1);
+            minesFound += this.countMine(r + 1, c - 1);
+            minesFound += this.countMine(r + 1, c);
+            minesFound += this.countMine(r + 1, c + 1);
+            if (minesFound > 0) {
+               tile.setText(Integer.toString(minesFound));
+            } else {
+               tile.setText("");
+               this.checkMine(r - 1, c - 1);
+               this.checkMine(r - 1, c);
+               this.checkMine(r - 1, c + 1);
+               this.checkMine(r, c - 1);
+               this.checkMine(r, c + 1);
+               this.checkMine(r + 1, c - 1);
+               this.checkMine(r + 1, c);
+               this.checkMine(r + 1, c + 1);
+            }
+
+            if (this.tilesClicked == this.board.getNumRows() * this.board.getNumCols() - this.board.getMineList().size()) {
+               this.gameOver = true;
+               this.textLabel.setText("Mines Cleared!");
+               this.timer.stop();
+            }
+
+         }
+      }
+   }
+
+   private int countMine(int r, int c) {
+      if (r >= 0 && r < this.board.getNumRows() && c >= 0 && c < this.board.getNumCols()) {
+         return this.board.isMine(this.board.getTile(r, c)) ? 1 : 0;
+      } else {
+         return 0;
+      }
+   }
