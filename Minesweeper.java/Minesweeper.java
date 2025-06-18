@@ -1,19 +1,10 @@
 package Minesweeper;
 
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Font;
-import java.awt.GridLayout;
-import java.awt.Insets;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
+import java.awt.*;
+import java.awt.event.*;
 import java.util.ArrayList;
 import java.util.Random;
-
-import javax.swing.JButton;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
+import javax.swing.*;
 
 public class Minesweeper {
 	private class MineTile extends JButton {
@@ -40,7 +31,6 @@ public class Minesweeper {
 		public void setCol(int col) {
 			this.col = col;
 		}
-
 	}
 
 	int tileSSize = 70;
@@ -58,68 +48,81 @@ public class Minesweeper {
 	MineTile[][] board = new MineTile[numRows][numCols];
 	ArrayList<MineTile> mineList;
 	Random random = new Random();
-	int tilesClicked = 0; // reveal all tiles except mines
+	int tilesClicked = 0;
 	boolean gameOver = false;
 
 	Minesweeper() {
-		frame.setSize(boardWidth, boardHeight);
-		frame.setLocationRelativeTo(null);
-		frame.setResizable(false);
-		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		frame.setLayout(new BorderLayout());
+		try {
+			frame.setSize(boardWidth, boardHeight);
+			frame.setLocationRelativeTo(null);
+			frame.setResizable(false);
+			frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+			frame.setLayout(new BorderLayout());
 
-		textLabel.setFont(new Font("Arial", Font.BOLD, 25));
-		textLabel.setHorizontalAlignment(JLabel.CENTER);
-		textLabel.setText("MineSweeper: " + Integer.toString(mineCount));
-		textLabel.setOpaque(true);
+			textLabel.setFont(new Font("Arial", Font.BOLD, 25));
+			textLabel.setHorizontalAlignment(JLabel.CENTER);
+			textLabel.setText("MineSweeper: " + Integer.toString(mineCount));
+			textLabel.setOpaque(true);
 
-		textPanel.setLayout(new BorderLayout());
-		textPanel.add(textLabel);
-		frame.add(textPanel, BorderLayout.NORTH);
+			textPanel.setLayout(new BorderLayout());
+			textPanel.add(textLabel);
+			frame.add(textPanel, BorderLayout.NORTH);
 
-		boardPanel.setLayout(new GridLayout(numRows, numCols)); // 8x8
-		boardPanel.setBackground(Color.gray);
-		frame.add(boardPanel, BorderLayout.CENTER);
+			boardPanel.setLayout(new GridLayout(numRows, numCols));
+			boardPanel.setBackground(Color.gray);
+			frame.add(boardPanel, BorderLayout.CENTER);
 
-		for (int r = 0; r < numRows; r++) {
-			for (int c = 0; c < numCols; c++) {
-				MineTile tile = new MineTile(r, c);
-				board[r][c] = tile;
+			for (int r = 0; r < numRows; r++) {
+				for (int c = 0; c < numCols; c++) {
+					MineTile tile = new MineTile(r, c);
+					board[r][c] = tile;
 
-				tile.setFocusable(false);
-				tile.setMargin(new Insets(0, 0, 0, 0));
-				tile.setFont(new Font("Arial Unicode Ms", Font.PLAIN, 45));
-				// tile.setText("💣");
-				boardPanel.add(tile);
-				tile.addMouseListener(new MouseAdapter() {
-					@Override
-					public void mousePressed(MouseEvent e) {
-						if (gameOver) {
-							return;
-						}
-						MineTile tile = (MineTile) e.getSource();
-						// left click
-						if (e.getButton() == MouseEvent.BUTTON1) {
-							if (tile.getText() == "") {
-								if (mineList.contains(tile)) {
-									revealMines();
-								} else {
-									checkMine(tile.row, tile.col);
+					tile.setFocusable(false);
+					tile.setMargin(new Insets(0, 0, 0, 0));
+					tile.setFont(new Font("Arial Unicode Ms", Font.PLAIN, 45));
+					boardPanel.add(tile);
+
+					tile.addMouseListener(new MouseAdapter() {
+						@Override
+						public void mousePressed(MouseEvent e) {
+							try {
+								if (gameOver) return;
+
+								MineTile tile = (MineTile) e.getSource();
+								// left click
+								if (e.getButton() == MouseEvent.BUTTON1) {
+									if (tile.getText().equals("")) {
+										if (mineList.contains(tile)) {
+											revealMines();
+										} else {
+											checkMine(tile.row, tile.col);
+										}
+									}
 								}
+								// right click
+								else if (e.getButton() == MouseEvent.BUTTON3) {
+									if (tile.getText().equals("") && tile.isEnabled()) {
+										tile.setText("🚩");
+									} else if (tile.getText().equals("🚩")) {
+										tile.setText("");
+									}
+								}
+							} catch (Exception ex) {
+								ex.printStackTrace();
+							} finally {
+								// Xử lý cleanup nếu cần
 							}
 						}
-						// right click
-						else if (e.getButton() == MouseEvent.BUTTON3) {
-							if (tile.getText() == "" && tile.isEnabled()) {
-								tile.setText("🚩");
-							} else if (tile.getText() == "🚩") {
-								tile.setText("");
-							}
-						}
-					}
-				});
+					});
+				}
 			}
+			frame.setVisible(true);
+			setMines();
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			// Khối finally ở constructor
 		}
-		frame.setVisible(true);
-		setMines();
 	}
+}
