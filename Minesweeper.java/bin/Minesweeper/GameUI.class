@@ -141,3 +141,47 @@ public class GameUI {
          return 0;
       }
    }
+   
+   private void resetGame() {
+      this.board.getMineList().clear();
+      this.board.setMines();
+      this.tilesClicked = 0;
+      this.gameOver = false;
+      this.textLabel.setText("Minesweeper: " + this.board.getMineCount());
+      MineTile[][] tiles = this.board.getBoard();
+      this.boardPanel.removeAll();
+      MineTile[][] var5 = tiles;
+      int var4 = tiles.length;
+
+      for(int var3 = 0; var3 < var4; ++var3) {
+         MineTile[] row = var5[var3];
+         MineTile[] var9 = row;
+         int var8 = row.length;
+
+         for(int var7 = 0; var7 < var8; ++var7) {
+            MineTile tile = var9[var7];
+            tile.setEnabled(true);
+            tile.setText("");
+            this.boardPanel.add(tile);
+         }
+      }
+
+      this.elapsedSeconds = 0;
+      this.timerLabel.setText("Time: 0s");
+      if (this.timer != null) {
+         this.timer.stop();
+      }
+
+      this.startTimer();
+      this.frame.revalidate();
+      this.frame.repaint();
+   }
+
+   public void startTimer() {
+      this.timer = new Timer(1000, (e) -> {
+         ++this.elapsedSeconds;
+         this.timerLabel.setText("Time: " + this.elapsedSeconds + "s");
+      });
+      this.timer.start();
+   }
+}
