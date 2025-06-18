@@ -1,0 +1,12 @@
+// Source code is decompiled from a .class file using FernFlower decompiler.
+package Minesweeper;
+
+public interface IMineTile {
+   int getRow();
+
+   int getCol();
+
+   void setRow(int var1);
+
+   void setCol(int var1);
+}
