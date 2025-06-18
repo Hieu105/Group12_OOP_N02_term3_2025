@@ -1,6 +1,6 @@
 package Minesweeper;
 
-//Dieu khien game
+// Dieu khien game
 
 public class GameController {
 	private final MineBoard board;
@@ -12,10 +12,16 @@ public class GameController {
 	}
 
 	public void startGame() {
-		board.initializeBoard();
-		board.setMines();
-		ui.setupBoard();
-		ui.startTimer();
+		try {
+			board.initializeBoard();
+			board.setMines();
+			ui.setupBoard();
+			ui.startTimer();
+		} catch (Exception e) {
+			System.err.println("Đã xảy ra lỗi khi bắt đầu trò chơi: " + e.getMessage());
+			e.printStackTrace();
+		} finally {
+			System.out.println("GameController.startGame() đã thực thi.");
+		}
 	}
-
 }
