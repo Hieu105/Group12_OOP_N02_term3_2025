@@ -31,32 +31,61 @@ public class MineBoard {
 	}
 
 	public void initializeBoard() {
-		for (int r = 0; r < numRows; r++) {
-			for (int c = 0; c < numCols; c++) {
-				board[r][c] = new MineTile(r, c);
+		try {
+			for (int r = 0; r < numRows; r++) {
+				for (int c = 0; c < numCols; c++) {
+					board[r][c] = new MineTile(r, c);
+				}
 			}
+		} catch (Exception e) {
+			System.err.println("Lỗi khi khởi tạo bảng: " + e.getMessage());
+		} finally {
+			System.out.println("Đã chạy initializeBoard()");
 		}
 	}
 
 	public void setMines() {
-		int minesLeft = mineCount;
-		while (minesLeft > 0) {
-			int r = random.nextInt(numRows);
-			int c = random.nextInt(numCols);
-			MineTile tile = board[r][c];
-			if (!mineList.contains(tile)) {
-				mineList.add(tile);
-				minesLeft--;
+		try {
+			int minesLeft = mineCount;
+			while (minesLeft > 0) {
+				int r = random.nextInt(numRows);
+				int c = random.nextInt(numCols);
+				MineTile tile = board[r][c];
+				if (!mineList.contains(tile)) {
+					mineList.add(tile);
+					minesLeft--;
+				}
 			}
+		} catch (Exception e) {
+			System.err.println("Lỗi khi đặt mìn: " + e.getMessage());
+		} finally {
+			System.out.println("Đã chạy setMines()");
 		}
 	}
 
 	public boolean isMine(MineTile tile) {
-		return mineList.contains(tile);
+		try {
+			return mineList.contains(tile);
+		} catch (Exception e) {
+			System.err.println("Lỗi khi kiểm tra mìn: " + e.getMessage());
+			return false;
+		} finally {
+			System.out.println("Kiểm tra isMine()");
+		}
 	}
 
 	public MineTile getTile(int r, int c) {
-		return board[r][c];
+		try {
+			return board[r][c];
+		} catch (ArrayIndexOutOfBoundsException e) {
+			System.err.println("Truy cập ngoài phạm vi bảng: " + e.getMessage());
+			return null;
+		} catch (Exception e) {
+			System.err.println("Lỗi khác trong getTile: " + e.getMessage());
+			return null;
+		} finally {
+			System.out.println("Đã gọi getTile(" + r + ", " + c + ")");
+		}
 	}
 
 	public int getNumRows() {
