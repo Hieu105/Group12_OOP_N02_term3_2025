@@ -1,0 +1,187 @@
+// Source code is decompiled from a .class file using FernFlower decompiler.
+package Minesweeper;
+
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.Font;
+import java.awt.GridLayout;
+import java.awt.Insets;
+import java.util.Iterator;
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.Timer;
+
+public class GameUI {
+   private JFrame frame;
+   private JLabel textLabel;
+   private JPanel boardPanel;
+   private final MineBoard board;
+   private boolean gameOver = false;
+   private int tilesClicked = 0;
+   private JButton resetButton;
+   private JLabel timerLabel;
+   private Timer timer;
+   private int elapsedSeconds = 0;
+
+   public GameUI(MineBoard board) {
+      this.board = board;
+      this.setupFrame();
+   }
+
+   private void setupFrame() {
+      this.frame = new JFrame("Minesweeper");
+      this.frame.setSize(this.board.getNumCols() * 70, this.board.getNumRows() * 70);
+      this.frame.setDefaultCloseOperation(3);
+      this.frame.setLayout(new BorderLayout());
+      this.frame.setLocationRelativeTo((Component)null);
+      this.frame.setResizable(false);
+      this.textLabel = new JLabel("Minesweeper: " + this.board.getMineCount(), 0);
+      this.textLabel.setFont(new Font("Arial", 1, 25));
+      JPanel textPanel = new JPanel(new BorderLayout());
+      textPanel.add(this.textLabel, "Center");
+      this.frame.add(textPanel, "North");
+      this.boardPanel = new JPanel(new GridLayout(this.board.getNumRows(), this.board.getNumCols()));
+      this.boardPanel.setBackground(Color.gray);
+      this.frame.add(this.boardPanel, "Center");
+      this.textLabel = new JLabel("Minesweeper: " + this.board.getMineCount(), 0);
+      this.textLabel.setFont(new Font("Arial", 1, 25));
+      this.timerLabel = new JLabel("Time: 0s", 4);
+      this.timerLabel.setFont(new Font("Arial", 0, 18));
+      this.resetButton = new JButton("Reset");
+      this.resetButton.setFont(new Font("Arial", 0, 25));
+      this.resetButton.addActionListener((e) -> {
+         this.resetGame();
+      });
+      JPanel topPanel = new JPanel(new BorderLayout());
+      topPanel.add(this.resetButton, "West");
+      topPanel.add(this.textLabel, "Center");
+      topPanel.add(this.timerLabel, "East");
+      this.frame.add(topPanel, "North");
+      this.resetButton.setFocusPainted(false);
+      this.resetButton.setBorderPainted(false);
+      this.resetButton.setBackground(Color.LIGHT_GRAY);
+   }
+   
+   public void setupBoard() {
+      MineTile[][] tiles = this.board.getBoard();
+
+      for(int r = 0; r < this.board.getNumRows(); ++r) {
+         for(int c = 0; c < this.board.getNumCols(); ++c) {
+            MineTile tile = tiles[r][c];
+            tile.setFocusable(false);
+            tile.setMargin(new Insets(0, 0, 0, 0));
+            tile.setFont(new Font("Arial Unicode Ms", 0, 45));
+            this.boardPanel.add(tile);
+            tile.addMouseListener(new 1(this, tile));
+         }
+      }
+
+      this.frame.setVisible(true);
+   }
+
+   private void revealMines() {
+      Iterator var2 = this.board.getMineList().iterator();
+
+      while(var2.hasNext()) {
+         MineTile tile = (MineTile)var2.next();
+         tile.setText("\ud83d\udca3");
+      }
+
+      this.gameOver = true;
+      this.textLabel.setText("Game Over!");
+      this.timer.stop();
+   }
+
+   private void checkMine(int r, int c) {
+      if (r >= 0 && r < this.board.getNumRows() && c >= 0 && c < this.board.getNumCols()) {
+         MineTile tile = this.board.getTile(r, c);
+         if (tile.isEnabled()) {
+            tile.setEnabled(false);
+            ++this.tilesClicked;
+            int minesFound = 0;
+            minesFound += this.countMine(r - 1, c - 1);
+            minesFound += this.countMine(r - 1, c);
+            minesFound += this.countMine(r - 1, c + 1);
+            minesFound += this.countMine(r, c - 1);
+            minesFound += this.countMine(r, c + 1);
+            minesFound += this.countMine(r + 1, c - 1);
+            minesFound += this.countMine(r + 1, c);
+            minesFound += this.countMine(r + 1, c + 1);
+            if (minesFound > 0) {
+               tile.setText(Integer.toString(minesFound));
+            } else {
+               tile.setText("");
+               this.checkMine(r - 1, c - 1);
+               this.checkMine(r - 1, c);
+               this.checkMine(r - 1, c + 1);
+               this.checkMine(r, c - 1);
+               this.checkMine(r, c + 1);
+               this.checkMine(r + 1, c - 1);
+               this.checkMine(r + 1, c);
+               this.checkMine(r + 1, c + 1);
+            }
+
+            if (this.tilesClicked == this.board.getNumRows() * this.board.getNumCols() - this.board.getMineList().size()) {
+               this.gameOver = true;
+               this.textLabel.setText("Mines Cleared!");
+               this.timer.stop();
+            }
+
+         }
+      }
+   }
+
+   private int countMine(int r, int c) {
+      if (r >= 0 && r < this.board.getNumRows() && c >= 0 && c < this.board.getNumCols()) {
+         return this.board.isMine(this.board.getTile(r, c)) ? 1 : 0;
+      } else {
+         return 0;
+      }
+   }
+   
+   private void resetGame() {
+      this.board.getMineList().clear();
+      this.board.setMines();
+      this.tilesClicked = 0;
+      this.gameOver = false;
+      this.textLabel.setText("Minesweeper: " + this.board.getMineCount());
+      MineTile[][] tiles = this.board.getBoard();
+      this.boardPanel.removeAll();
+      MineTile[][] var5 = tiles;
+      int var4 = tiles.length;
+
+      for(int var3 = 0; var3 < var4; ++var3) {
+         MineTile[] row = var5[var3];
+         MineTile[] var9 = row;
+         int var8 = row.length;
+
+         for(int var7 = 0; var7 < var8; ++var7) {
+            MineTile tile = var9[var7];
+            tile.setEnabled(true);
+            tile.setText("");
+            this.boardPanel.add(tile);
+         }
+      }
+
+      this.elapsedSeconds = 0;
+      this.timerLabel.setText("Time: 0s");
+      if (this.timer != null) {
+         this.timer.stop();
+      }
+
+      this.startTimer();
+      this.frame.revalidate();
+      this.frame.repaint();
+   }
+
+   public void startTimer() {
+      this.timer = new Timer(1000, (e) -> {
+         ++this.elapsedSeconds;
+         this.timerLabel.setText("Time: " + this.elapsedSeconds + "s");
+      });
+      this.timer.start();
+   }
+}
