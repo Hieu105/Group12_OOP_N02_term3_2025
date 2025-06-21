@@ -116,43 +116,62 @@ public class GameUI {
 	}
 
 	private void revealMines() {
+	try {
 		for (MineTile tile : board.getMineList()) {
-			tile.setText("\uD83D\uDCA3");
+			tile.setText("💣");
 		}
 		gameOver = true;
 		textLabel.setText("Game Over!");
 		timer.stop();
+	} catch (Exception e) {
+		System.out.println("Lỗi khi hiển thị mìn: " + e.getMessage());
+		e.printStackTrace();
+	} finally {
+		System.out.println("Thực hiện xong revealMines().");
 	}
+}
 
-	private void checkMine(int r, int c) {
-		if (r < 0 || r >= board.getNumRows() || c < 0 || c >= board.getNumCols()) return;
+private void checkMine(int r, int c) {
+	try {
+		if (r < 0 || r >= board.getNumRows() || c < 0 || c >= board.getNumCols())
+			return;
+
 		MineTile tile = board.getTile(r, c);
-		if (!tile.isEnabled()) return;
+		if (!tile.isEnabled())
+			return;
+
 		tile.setEnabled(false);
 		tilesClicked++;
 
 		int minesFound = 0;
-		minesFound += countMine(r - 1, c - 1);
-		minesFound += countMine(r - 1, c);
-		minesFound += countMine(r - 1, c + 1);
-		minesFound += countMine(r, c - 1);
-		minesFound += countMine(r, c + 1);
-		minesFound += countMine(r + 1, c - 1);
-		minesFound += countMine(r + 1, c);
-		minesFound += countMine(r + 1, c + 1);
+		// top 3
+		minesFound += countMine(r - 1, c - 1); // top left
+		minesFound += countMine(r - 1, c);     // top
+		minesFound += countMine(r - 1, c + 1); // top right
+		// left and right
+		minesFound += countMine(r, c - 1);     // left
+		minesFound += countMine(r, c + 1);     // right
+		// bottom
+		minesFound += countMine(r + 1, c - 1); // bottom left
+		minesFound += countMine(r + 1, c);     // bottom
+		minesFound += countMine(r + 1, c + 1); // bottom right
 
 		if (minesFound > 0) {
 			tile.setText(Integer.toString(minesFound));
 		} else {
 			tile.setText("");
-			checkMine(r - 1, c - 1);
-			checkMine(r - 1, c);
-			checkMine(r - 1, c + 1);
-			checkMine(r, c - 1);
-			checkMine(r, c + 1);
-			checkMine(r + 1, c - 1);
-			checkMine(r + 1, c);
-			checkMine(r + 1, c + 1);
+
+			// top 3
+			checkMine(r - 1, c - 1); // top left
+			checkMine(r - 1, c);     // top
+			checkMine(r - 1, c + 1); // top right
+			// left and right
+			checkMine(r, c - 1);     // left
+			checkMine(r, c + 1);     // right
+			// bottom 3
+			checkMine(r + 1, c - 1); // bottom left
+			checkMine(r + 1, c);     // bottom
+			checkMine(r + 1, c + 1); // bottom right
 		}
 
 		if (tilesClicked == board.getNumRows() * board.getNumCols() - board.getMineList().size()) {
@@ -160,46 +179,27 @@ public class GameUI {
 			textLabel.setText("Mines Cleared!");
 			timer.stop();
 		}
+	} catch (Exception e) {
+		System.out.println("Lỗi trong checkMine tại (" + r + ", " + c + "): " + e.getMessage());
+		e.printStackTrace();
+	} finally {
+		// Có thể để trống hoặc ghi log nếu cần
 	}
+}
 
-	private int countMine(int r, int c) {
-		if (r < 0 || r >= board.getNumRows() || c < 0 || c >= board.getNumCols()) return 0;
+private int countMine(int r, int c) {
+	try {
+		if (r < 0 || r >= board.getNumRows() || c < 0 || c >= board.getNumCols())
+			return 0;
 		return board.isMine(board.getTile(r, c)) ? 1 : 0;
+	} catch (Exception e) {
+		System.out.println("Lỗi khi đếm mìn tại (" + r + ", " + c + "): " + e.getMessage());
+		e.printStackTrace();
+		return 0;
+	} finally {
+		// Có thể ghi log nếu cần
 	}
+}
 
-	private void resetGame() {
-		board.getMineList().clear();
-		board.setMines();
-		tilesClicked = 0;
-		gameOver = false;
-		textLabel.setText("Minesweeper: " + board.getMineCount());
 
-		MineTile[][] tiles = board.getBoard();
-		boardPanel.removeAll();
-
-		for (MineTile[] row : tiles) {
-			for (MineTile tile : row) {
-				tile.setEnabled(true);
-				tile.setText("");
-				boardPanel.add(tile);
-			}
-		}
-
-		elapsedSeconds = 0;
-		timerLabel.setText("Time: 0s");
-		if (timer != null) {
-			timer.stop();
-		}
-		startTimer();
-		frame.revalidate();
-		frame.repaint();
-	}
-
-	public void startTimer() {
-		timer = new Timer(1000, e -> {
-			elapsedSeconds++;
-			timerLabel.setText("Time: " + elapsedSeconds + "s");
-		});
-		timer.start();
-	}
-} 
+	
