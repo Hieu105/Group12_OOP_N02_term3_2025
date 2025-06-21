@@ -157,4 +157,103 @@ public class Minesweeper {
 		}
 	}
 
+void revealMines() {
+	try {
+		for (int i = 0; i < mineList.size(); i++) {
+			MineTile tile = mineList.get(i);
+			tile.setText("💣");
+		}
+		gameOver = true;
+		textLabel.setText("Game Over!");
+	} catch (Exception e) {
+		System.out.println("Lỗi khi hiển thị mìn: " + e.getMessage());
+		e.printStackTrace();
+	} finally {
+		System.out.println("Kết thúc phương thức revealMines()");
+	}
+}
+
+void checkMine(int r, int c) {
+	try {
+		if (r < 0 || r >= numRows || c < 0 || c >= numCols) {
+			return;
+		}
+
+		MineTile tile = board[r][c];
+		if (!tile.isEnabled()) {
+			return;
+		}
+
+		tile.setEnabled(false);
+		tilesClicked += 1;
+		int minesFound = 0;
+
+		// kiểm tra 8 hướng xung quanh
+		minesFound += countMine(r - 1, c - 1); // top left
+		minesFound += countMine(r - 1, c);     // top
+		minesFound += countMine(r - 1, c + 1); // top right
+		minesFound += countMine(r, c - 1);     // left
+		minesFound += countMine(r, c + 1);     // right
+		minesFound += countMine(r + 1, c - 1); // bottom left
+		minesFound += countMine(r + 1, c);     // bottom
+		minesFound += countMine(r + 1, c + 1); // bottom right
+
+		if (minesFound > 0) {
+			tile.setText(Integer.toString(minesFound));
+		} else {
+			tile.setText("");
+
+			// Đệ quy mở ô không có mìn xung quanh
+			checkMine(r - 1, c - 1);
+			checkMine(r - 1, c);
+			checkMine(r - 1, c + 1);
+			checkMine(r, c - 1);
+			checkMine(r, c + 1);
+			checkMine(r + 1, c - 1);
+			checkMine(r + 1, c);
+			checkMine(r + 1, c + 1);
+		}
+
+		// Kiểm tra thắng
+		if (tilesClicked == numRows * numCols - mineList.size()) {
+			gameOver = true;
+			textLabel.setText("Mines Cleared!");
+		}
+	} catch (Exception e) {
+		System.out.println("Lỗi trong checkMine tại (" + r + ", " + c + "): " + e.getMessage());
+		e.printStackTrace();
+	} finally {
+		// Ghi log hoặc xử lý cleanup nếu cần
+	}
+}
+
+int countMine(int r, int c) {
+	try {
+		if (r < 0 || r >= numRows || c < 0 || c >= numCols) {
+			return 0;
+		}
+		if (mineList.contains(board[r][c])) {
+			return 1;
+		}
+		return 0;
+	} catch (Exception e) {
+		System.out.println("Lỗi khi đếm mìn tại (" + r + ", " + c + "): " + e.getMessage());
+		e.printStackTrace();
+		return 0;
+	} finally {
+		// Có thể để trống hoặc ghi log nếu cần
+	}
+}
+
+public static void main(String[] args) {
+	try {
+		new Minesweeper();
+	} catch (Exception e) {
+		System.out.println("Lỗi khi khởi động Minesweeper: " + e.getMessage());
+		e.printStackTrace();
+	} finally {
+		System.out.println("Chương trình đã kết thúc main().");
+	}
+}
+
 	
