@@ -114,8 +114,8 @@ public class GameUI {
 			System.out.println("setupBoard() đã được thực thi.");
 		}
 	}
-
-	private void revealMines() {
+	
+private void revealMines() {
 	try {
 		for (MineTile tile : board.getMineList()) {
 			tile.setText("💣");
@@ -200,6 +200,5 @@ private int countMine(int r, int c) {
 		// Có thể ghi log nếu cần
 	}
 }
-
 
 	
