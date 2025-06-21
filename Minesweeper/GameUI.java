@@ -201,4 +201,63 @@ private int countMine(int r, int c) {
 	}
 }
 
+private void resetGame() {
+	try {
+		board.getMineList().clear();
+		board.setMines();
+		tilesClicked = 0;
+		gameOver = false;
+		textLabel.setText("Minesweeper: " + board.getMineCount());
+
+		MineTile[][] tiles = board.getBoard();
+		boardPanel.removeAll();
+
+		for (MineTile[] row : tiles) {
+			for (MineTile tile : row) {
+				tile.setEnabled(true);
+				tile.setText("");
+				boardPanel.add(tile);
+			}
+		}
+
+		elapsedSeconds = 0;
+		timerLabel.setText("Time: 0s");
+
+		if (timer != null) {
+			timer.stop();
+		}
+
+		startTimer();
+
+		frame.revalidate();
+		frame.repaint();
+	} catch (Exception e) {
+		System.out.println("Lỗi khi reset trò chơi: " + e.getMessage());
+		e.printStackTrace();
+	} finally {
+		System.out.println("Đã chạy xong resetGame().");
+	}
+}
+
+public void startTimer() {
+	try {
+		timer = new Timer(1000, e -> {
+			try {
+				elapsedSeconds++;
+				timerLabel.setText("Time: " + elapsedSeconds + "s");
+			} catch (Exception ex) {
+				System.out.println("Lỗi trong Timer tick: " + ex.getMessage());
+				ex.printStackTrace();
+			}
+		});
+		timer.start();
+	} catch (Exception e) {
+		System.out.println("Lỗi khi khởi động Timer: " + e.getMessage());
+		e.printStackTrace();
+	} finally {
+		System.out.println("startTimer() đã hoàn tất.");
+	}
+}
+
+
 	
